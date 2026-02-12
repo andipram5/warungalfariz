@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard Warung PRO</title>
+<style>
+body{font-family:Arial;background:#f1f5f9;padding:15px}
+.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:15px}
+input,button{padding:8px;margin:3px}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ddd;padding:6px}
+</style>
+</head>
+<body>
+<h2>POS Kasir</h2>
+<div class="card">
+<input id="id" placeholder="ID / Barcode">
+<input id="nama" placeholder="Nama">
+<input id="qty" type="number" placeholder="Qty">
+<input id="harga" type="number" placeholder="Harga">
+<button onclick="add()">Tambah</button>
+</div>
+
+
+<div class="card">
+<table id="tbl">
+<tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Total</th></tr>
+</table>
+<h3>Total: <span id="total">0</span></h3>
+<button onclick="checkout()">PROSES</button>
+</div>
+
+
+<script>
+const API='ISI_URL_WEBAPP';
+let cart=[];
+
+
+function add(){
+cart.push({id:id.value,nama:nama.value,qty:+qty.value,harga:+harga.value});
+render();
+}
+
+
+function render(){
+tbl.innerHTML='<tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Total</th></tr>';
+let t=0;
+cart.forEach(i=>{
+const tr=tbl.insertRow();
+tr.insertCell().innerText=i.nama;
+tr.insertCell().innerText=i.qty;
+tr.insertCell().innerText=i.harga;
+tr.insertCell().innerText=i.qty*i.harga;
+t+=i.qty*i.harga;
+});
+total.innerText=t;
+}
+
+
+function checkout(){
+fetch(API,{method:'POST',body:JSON.stringify({action:'jual',items:cart})})
+.then(r=>r.json()).then(d=>{
+alert('Sukses Nota '+d.nota);
+cart=[];render();
+});
+}
+</script>
+</body>
+</html>
