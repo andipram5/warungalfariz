@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen Admin - Warung PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+header{
+  background:#fff;
+  padding:15px 25px;
+  font-size:20px;
+  font-weight:600;
+  border-radius:0 0 20px 20px;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.container{
+  padding:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.box{
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+h3{margin:0 0 15px}
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-family:inherit;
+}
+button{
+  background:#16a34a;
+  color:#fff;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+}
+button:hover{background:#15803d}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  text-align:left;
+}
+.back{
+  background:#334155;
+}
+@media(max-width:800px){
+  .container{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  👤 Manajemen Admin
+  <button class="back" onclick="location='index.html'">⬅ Dashboard</button>
+</header>
+
+<div class="container">
+
+  <div class="box">
+    <h3>➕ Tambah User Baru</h3>
+    <input id="user" placeholder="Username">
+    <input id="pass" placeholder="Password">
+    <select id="role">
+      <option value="admin">Admin</option>
+      <option value="kasir">Kasir</option>
+    </select>
+    <button onclick="tambah()">Simpan</button>
+    <p id="msg"></p>
+  </div>
+
+  <div class="box">
+    <h3>📋 Daftar User</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const API='ISI_URL_WEBAPP';
+
+if(localStorage.role!=='admin'){
+  alert('Akses ditolak');
+  location='index.html';
+}
+
+function load(){
+fetch(API+'?action=listUser')
+.then(r=>r.json())
+.then(d=>{
+  tbl.innerHTML='';
+  d.forEach(r=>{
+    const tr=tbl.insertRow();
+    tr.insertCell().innerText=r[0];
+    tr.insertCell().innerText=r[2];
+  });
+});
+}
+
+function tambah(){
+if(!user.value||!pass.value) return alert('Lengkapi data');
+
+fetch(API+'?action=tambahUser&user='+user.value+'&pass='+pass.value+'&role='+role.value)
+.then(r=>r.json())
+.then(d=>{
+  if(d.status==='ok'){
+    user.value='';pass.value='';
+    msg.innerText='User berhasil ditambahkan';
+    load();
+  } else msg.innerText='Gagal';
+});
+}
+
+load();
+</script>
+
+</body>
+</html>
