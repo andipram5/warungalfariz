@@ -14,103 +14,166 @@ body{
   font-family:'Poppins',sans-serif;
   background:linear-gradient(135deg,#16a34a,#22c55e);
   min-height:100vh;
+  display:flex;
+  flex-direction:column;
 }
+
 header{
   background:#fff;
+  margin:15px;
   padding:15px 25px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+header h2{
+  margin:0;
   font-size:22px;
-  font-weight:600;
-  border-radius:0 0 20px 20px;
-  box-shadow:0 5px 15px rgba(0,0,0,.15);
 }
-.container{
-  padding:25px;
+
+.hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 40px;
+  color:white;
+}
+
+.hero-text h1{
+  font-size:38px;
+  margin:0;
+}
+.hero-text p{
+  opacity:.9;
+}
+
+.hero img{
+  width:200px;
+  animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-15px)}
+}
+
+.menu{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:20px;
+  padding:25px 40px;
 }
+
 .card{
-  background:#fff;
-  padding:25px;
+  background:white;
   border-radius:18px;
+  padding:25px 15px;
   text-align:center;
   cursor:pointer;
   transition:.3s;
-  box-shadow:0 5px 15px rgba(0,0,0,.12);
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
+
 .card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 10px 25px rgba(0,0,0,.2);
+  transform:translateY(-8px) scale(1.03);
 }
-.icon{
-  font-size:42px;
+
+.card img{
+  width:70px;
   margin-bottom:12px;
 }
-.title{
-  font-size:16px;
+
+.card h4{
+  margin:0;
   font-weight:600;
 }
+
 .logout{
   background:#dc2626;
-  color:#fff;
+  color:white;
 }
-.logout:hover{background:#b91c1c}
+
 footer{
+  margin-top:auto;
   text-align:center;
-  padding:10px;
-  color:#fff;
-  font-size:12px;
+  color:white;
+  padding:15px;
+  opacity:.85;
+  font-size:14px;
+}
+
+@media(max-width:700px){
+.hero{flex-direction:column;text-align:center}
+.hero img{margin-top:15px}
+.hero-text h1{font-size:28px}
 }
 </style>
 </head>
 
 <body>
 
-<header>🏪 Dashboard Warung PRO</header>
+<header>
+  <h2>🏪 Dashboard Warung PRO</h2>
+  <b id="user"></b>
+</header>
 
-<div class="container">
+<div class="hero">
+  <div class="hero-text">
+    <h1>Smart POS System</h1>
+    <p>Kelola transaksi & stok warung Anda lebih cepat, aman, dan profesional</p>
+  </div>
 
+  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+</div>
+
+<div class="menu">
   <div class="card" onclick="go('dashboard.html')">
-    <div class="icon">🧾</div>
-    <div class="title">Transaksi Kasir</div>
+    <img src="https://cdn-icons-png.flaticon.com/512/1041/1041880.png">
+    <h4>Transaksi Kasir</h4>
   </div>
 
-  <div class="card" onclick="go('stok-masuk.html')">
-    <div class="icon">📥</div>
-    <div class="title">Input Stok Masuk</div>
+  <div class="card" onclick="go('stok_masuk.html')">
+    <img src="https://cdn-icons-png.flaticon.com/512/1041/1041873.png">
+    <h4>Input Stok Masuk</h4>
   </div>
 
-  <div class="card" onclick="go('stok-keluar.html')">
-    <div class="icon">📤</div>
-    <div class="title">Input Stok Keluar</div>
+  <div class="card" onclick="go('stok_keluar.html')">
+    <img src="https://cdn-icons-png.flaticon.com/512/1041/1041876.png">
+    <h4>Input Stok Keluar</h4>
   </div>
 
-  <div class="card" onclick="go('laporan-stok.html')">
-    <div class="icon">📊</div>
-    <div class="title">Laporan Seluruh Stok</div>
+  <div class="card" onclick="go('laporan.html')">
+    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png">
+    <h4>Laporan Stok</h4>
   </div>
 
   <div class="card" onclick="go('admin.html')">
-    <div class="icon">👤</div>
-    <div class="title">Tambah Admin</div>
+    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png">
+    <h4>Tambah Admin</h4>
   </div>
 
   <div class="card logout" onclick="logout()">
-    <div class="icon">🚪</div>
-    <div class="title">Logout</div>
+    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828490.png">
+    <h4>Logout</h4>
   </div>
-
 </div>
 
-<footer>© 2026 Warung PRO — Smart POS System</footer>
+<footer>
+© 2026 Warung PRO — Smart POS System
+</footer>
 
 <script>
 if(!localStorage.role){
   location='login.html';
 }
 
-function go(page){
-  location=page;
+user.innerText='👤 '+localStorage.role.toUpperCase();
+
+function go(x){
+  location=x;
 }
 
 function logout(){
@@ -121,4 +184,3 @@ function logout(){
 
 </body>
 </html>
-
