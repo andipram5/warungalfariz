@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Produk</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#16a34a,#22c55e)}
+header{background:#fff;margin:15px;padding:15px 25px;border-radius:15px;display:flex;justify-content:space-between}
+.container{padding:15px;display:grid;grid-template-columns:350px 1fr;gap:15px}
+.box{background:white;border-radius:15px;padding:15px;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+input,button{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ddd}
+button{background:#16a34a;color:white;font-weight:600;border:none}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #ddd}
+</style>
+</head>
+
+<body>
+
+<header>
+  <b>📦 Master Produk</b>
+  <button onclick="location='index.html'">⬅ Dashboard</button>
+</header>
+
+<div class="container">
+
+<div class="box">
+<h3>Tambah Produk</h3>
+<input id="id" placeholder="ID Produk">
+<input id="barcode" placeholder="Barcode">
+<input id="nama" placeholder="Nama Produk">
+<input id="beli" placeholder="Harga Beli">
+<input id="jual" placeholder="Harga Jual">
+<input id="stok" placeholder="Stok Awal">
+<button onclick="simpan()">Simpan</button>
+<p id="msg"></p>
+</div>
+
+<div class="box">
+<h3>Daftar Produk</h3>
+<table>
+<thead>
+<tr><th>ID</th><th>Nama</th><th>Harga</th><th>Stok</th></tr>
+</thead>
+<tbody id="tbl"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
+
+function load(){
+fetch(API+'?action=listProduk')
+.then(r=>r.json())
+.then(d=>{
+  tbl.innerHTML='';
+  d.forEach(r=>{
+    const tr=tbl.insertRow();
+    tr.insertCell().innerText=r[0];
+    tr.insertCell().innerText=r[2];
+    tr.insertCell().innerText=r[4];
+    tr.insertCell().innerText=r[5];
+  });
+});
+}
+
+function simpan(){
+fetch(API+'?action=tambahProduk&id='+id.value+'&barcode='+barcode.value+'&nama='+nama.value+'&beli='+beli.value+'&jual='+jual.value+'&stok='+stok.value)
+.then(r=>r.json())
+.then(d=>{
+  if(d=='ok'){
+    msg.innerText='Produk tersimpan';
+    load();
+  }
+});
+}
+
+load();
+</script>
+
+</body>
+</html>
