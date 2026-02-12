@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login Warung PRO</title>
+<style>
+body{display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial;background:#16a34a}
+.box{background:#fff;padding:20px;border-radius:10px;width:300px}
+input,button{width:100%;padding:10px;margin:5px 0}
+</style>
+</head>
+<body>
+<div class="box">
+<h3>Login Warung PRO</h3>
+<input id="user" placeholder="Username">
+<input id="pass" placeholder="Password" type="password">
+<button onclick="login()">Login</button>
+<p id="msg"></p>
+</div>
+<script>
+const API='ISI_URL_WEBAPP';
+function login(){
+fetch(API,{method:'POST',body:JSON.stringify({action:'login',user:user.value,pass:pass.value})})
+.then(r=>r.json()).then(d=>{
+if(d.status==='ok'){
+localStorage.role=d.role;
+location='dashboard.html';
+} else msg.innerText='Login gagal';
+});
+}
+</script>
+</body>
+</html>
