@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Warung PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  min-height:100vh;
+}
+header{
+  background:#fff;
+  padding:15px 25px;
+  font-size:22px;
+  font-weight:600;
+  border-radius:0 0 20px 20px;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+.container{
+  padding:25px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+.card{
+  background:#fff;
+  padding:25px;
+  border-radius:18px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s;
+  box-shadow:0 5px 15px rgba(0,0,0,.12);
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 25px rgba(0,0,0,.2);
+}
+.icon{
+  font-size:42px;
+  margin-bottom:12px;
+}
+.title{
+  font-size:16px;
+  font-weight:600;
+}
+.logout{
+  background:#dc2626;
+  color:#fff;
+}
+.logout:hover{background:#b91c1c}
+footer{
+  text-align:center;
+  padding:10px;
+  color:#fff;
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🏪 Dashboard Warung PRO</header>
+
+<div class="container">
+
+  <div class="card" onclick="go('kasir.html')">
+    <div class="icon">🧾</div>
+    <div class="title">Transaksi Kasir</div>
+  </div>
+
+  <div class="card" onclick="go('stok-masuk.html')">
+    <div class="icon">📥</div>
+    <div class="title">Input Stok Masuk</div>
+  </div>
+
+  <div class="card" onclick="go('stok-keluar.html')">
+    <div class="icon">📤</div>
+    <div class="title">Input Stok Keluar</div>
+  </div>
+
+  <div class="card" onclick="go('laporan-stok.html')">
+    <div class="icon">📊</div>
+    <div class="title">Laporan Seluruh Stok</div>
+  </div>
+
+  <div class="card" onclick="go('admin.html')">
+    <div class="icon">👤</div>
+    <div class="title">Tambah Admin</div>
+  </div>
+
+  <div class="card logout" onclick="logout()">
+    <div class="icon">🚪</div>
+    <div class="title">Logout</div>
+  </div>
+
+</div>
+
+<footer>© 2026 Warung PRO — Smart POS System</footer>
+
+<script>
+if(!localStorage.role){
+  location='login.html';
+}
+
+function go(page){
+  location=page;
+}
+
+function logout(){
+  localStorage.clear();
+  location='login.html';
+}
+</script>
+
+</body>
+</html>
