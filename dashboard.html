@@ -1,68 +1,138 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Dashboard Warung PRO</title>
+<meta charset="UTF-8">
+<title>POS Kasir PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body{font-family:Arial;background:#f1f5f9;padding:15px}
-.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:15px}
-input,button{padding:8px;margin:3px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial;background:#f1f5f9}
+header{background:#16a34a;color:#fff;padding:15px 20px;font-size:20px;font-weight:600}
+.container{max-width:1200px;margin:auto;padding:20px}
+.card{background:#fff;border-radius:14px;padding:15px;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.grid{display:grid;grid-template-columns:2fr 3fr;gap:15px}
+input,button{padding:10px;border-radius:10px;border:1px solid #ccc;font-size:14px}
+input:focus{outline:none;border-color:#16a34a}
+button{background:#16a34a;color:#fff;border:none;cursor:pointer}
+button:hover{opacity:.9}
 table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #ddd;padding:6px}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+th{background:#f8fafc}
+.totalBox{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:700}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
+
 <body>
-<h2>POS Kasir</h2>
+<header>POS KASIR WARUNG PRO</header>
+
+<div class="container">
+
+<div class="grid">
+
 <div class="card">
-<input id="id" placeholder="ID / Barcode">
-<input id="nama" placeholder="Nama">
-<input id="qty" type="number" placeholder="Qty">
-<input id="harga" type="number" placeholder="Harga">
-<button onclick="add()">Tambah</button>
+<h3>Input Produk</h3>
+<input id="id" placeholder="ID / Barcode"><br><br>
+<input id="nama" placeholder="Nama Produk"><br><br>
+<input id="qty" type="number" placeholder="Qty"><br><br>
+<input id="harga" type="number" placeholder="Harga"><br><br>
+<button onclick="addItem()">Tambah</button>
 </div>
 
-
 <div class="card">
+<h3>Keranjang</h3>
 <table id="tbl">
-<tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Total</th></tr>
+<tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Total</th><th></th></tr>
 </table>
-<h3>Total: <span id="total">0</span></h3>
+
+<div class="totalBox">
+<div>Total: Rp <span id="total">0</span></div>
 <button onclick="checkout()">PROSES</button>
 </div>
+</div>
 
+</div>
+
+</div>
 
 <script>
-const API='ISI_URL_WEBAPP';
-let cart=[];
+const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
+let cart = [];
 
+function addItem(){
+  if(!id.value || !nama.value || !qty.value || !harga.value) return alert('Lengkapi data');
 
-function add(){
-cart.push({id:id.value,nama:nama.value,qty:+qty.value,harga:+harga.value});
-render();
+  cart.push({
+    id:id.value,
+    nama:nama.value,
+    qty:+qty.value,
+    harga:+harga.value
+  });
+
+  id.value='';nama.value='';qty.value='';harga.value='';
+  render();
 }
 
+function removeItem(i){
+  cart.splice(i,1);
+  render();
+}
 
 function render(){
-tbl.innerHTML='<tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Total</th></tr>';
-let t=0;
-cart.forEach(i=>{
-const tr=tbl.insertRow();
-tr.insertCell().innerText=i.nama;
-tr.insertCell().innerText=i.qty;
-tr.insertCell().innerText=i.harga;
-tr.insertCell().innerText=i.qty*i.harga;
-t+=i.qty*i.harga;
-});
-total.innerText=t;
+  tbl.innerHTML='<tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Total</th><th></th></tr>';
+  let t=0;
+  cart.forEach((it,i)=>{
+    const tr=tbl.insertRow();
+    tr.insertCell().innerText=it.nama;
+    tr.insertCell().innerText=it.qty;
+    tr.insertCell().innerText=it.harga;
+    tr.insertCell().innerText=it.qty*it.harga;
+    tr.insertCell().innerHTML=`<button onclick="removeItem(${i})">X</button>`;
+    t+=it.qty*it.harga;
+  });
+  total.innerText=t.toLocaleString();
 }
-
 
 function checkout(){
-fetch(API,{method:'POST',body:JSON.stringify({action:'jual',items:cart})})
-.then(r=>r.json()).then(d=>{
-alert('Sukses Nota '+d.nota);
-cart=[];render();
-});
+  if(cart.length==0) return alert('Keranjang kosong');
+
+  const url = API + '?action=kasir&data=' + encodeURIComponent(JSON.stringify({items:cart}));
+
+  fetch(url)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'){
+        alert('Transaksi sukses! Nota: '+d.nota);
+        cart=[];
+        render();
+      } else alert('Gagal simpan transaksi');
+    });
 }
 </script>
+
 </body>
 </html>
+```
+
+---
+
+# HASIL AKHIR
+
+* Tampilan kasir modern
+* UX seperti aplikasi POS profesional
+* Stok otomatis berkurang
+* Transaksi langsung tersimpan
+
+---
+
+# MAU SAYA TAMBAHKAN?
+
+* Scan barcode kamera HP
+* Cetak struk thermal
+* Dashboard grafik realtime
+* Riwayat transaksi
+* Laporan harian otomatis
+
+Tinggal bilang 😄
