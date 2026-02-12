@@ -18,16 +18,33 @@ input,button{width:100%;padding:10px;margin:5px 0}
 </div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
+
 function login(){
-fetch(API,{method:'POST',body:JSON.stringify({action:'login',user:user.value,pass:pass.value})})
-.then(r=>r.json()).then(d=>{
-if(d.status==='ok'){
-localStorage.role=d.role;
-location='dashboard.html';
-} else msg.innerText='Login gagal';
-});
+  fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      action:'login',
+      user:user.value,
+      pass:pass.value
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    console.log(d);
+    if(d.status==='ok'){
+      localStorage.role=d.role;
+      location='dashboard.html';
+    } else {
+      msg.innerText='Login gagal';
+    }
+  })
+  .catch(err=>{
+    msg.innerText='ERROR: '+err;
+  });
 }
 </script>
 </body>
 
 </html>
+
