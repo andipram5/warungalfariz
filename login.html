@@ -20,31 +20,30 @@ input,button{width:100%;padding:10px;margin:5px 0}
 const API='https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
 
 function login(){
-  fetch(API,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      action:'login',
-      user:user.value,
-      pass:pass.value
+  const url = API +
+    '?action=login' +
+    '&user=' + encodeURIComponent(user.value) +
+    '&pass=' + encodeURIComponent(pass.value);
+
+  fetch(url)
+    .then(r=>r.json())
+    .then(d=>{
+      console.log(d);
+      if(d.status === 'ok'){
+        localStorage.role = d.role;
+        location = 'dashboard.html';
+      } else {
+        msg.innerText = 'Login gagal';
+      }
     })
-  })
-  .then(r=>r.json())
-  .then(d=>{
-    console.log(d);
-    if(d.status==='ok'){
-      localStorage.role=d.role;
-      location='dashboard.html';
-    } else {
-      msg.innerText='Login gagal';
-    }
-  })
-  .catch(err=>{
-    msg.innerText='ERROR: '+err;
-  });
+    .catch(err=>{
+      msg.innerText = 'ERROR: ' + err;
+    });
 }
 </script>
+
 </body>
 
 </html>
+
 
