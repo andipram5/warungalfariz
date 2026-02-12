@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+.card{
+background:white;
+border-radius:15px;
+padding:15px;
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+.stat{
+font-size:28px;
+font-weight:600;
+}
+canvas{max-height:300px}
+</style>
+</head>
+<body>
+
+
+<header>
+<b>📊 Dashboard Grafik Real-Time</b>
+<button onclick="location='index.html'">⬅ Kembali</button>
+</header>
+
+
+<div class="container">
+
+
+<div class="card">
+<h4>Omset Hari Ini</h4>
+<div class="stat" id="omset">Rp 0</div>
+</div>
+
+
+<div class="card">
+<h4>Total Transaksi</h4>
+<div class="stat" id="trx">0</div>
+</div>
+
+
+<div class="card">
+<h4>Grafik Penjualan Harian</h4>
+<canvas id="chartHari"></canvas>
+</div>
+
+
+<div class="card">
+<h4>Produk Terlaris</h4>
+<canvas id="chartProduk"></canvas>
+</div>
+
+
+</div>
+
+
+<script>
+const API = 'ISI_URL_WEBAPP';
+
+
+fetch(API+'?action=dashboard')
+.then(r=>r.json())
+.then(d=>{
+omset.innerText = 'Rp '+d.omset.toLocaleString();
+trx.innerText = d.trx;
+
+
+new Chart(chartHari,{
+type:'line',
+data:{
+labels:d.hari.label,
+datasets:[{label:'Omset',data:d.hari.data,borderWidth:2,fill:false}]
+}
+});
+
+
+new Chart(chartProduk,{
+type:'bar',
+data:{
+labels:d.produk.label,
+datasets:[{label:'Qty Terjual',data:d.produk.data,borderWidth:1}]
+}
+});
+});
+</script>
+
+
+</body>
+</html>
