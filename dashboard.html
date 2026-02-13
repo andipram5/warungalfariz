@@ -116,12 +116,6 @@ if(localStorage.getItem('login') !== 'true'){
   location = 'login.html';
 }
 
-user.innerText = '👤 ' + localStorage.getItem('role');
-
-function go(x){
-  location=x;
-}
-
 function logout(){
   localStorage.clear();
   location='login.html';
@@ -129,4 +123,5 @@ function logout(){
 </script>
 </body>
 </html>
+
 
