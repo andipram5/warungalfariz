@@ -183,10 +183,16 @@ function login(){
       msg.innerText = 'ERROR: '+err;
     });
 }
+  if(d.status === 'ok'){
+  localStorage.setItem('login','true');
+  localStorage.setItem('role', d.role);
+  location = 'index.html';
+}
 </script>
 
 </body>
 </html>
+
 
 
 
