@@ -111,6 +111,22 @@ function checkout(){
     });
 }
 </script>
+<script>
+if(localStorage.getItem('login') !== 'true'){
+  location = 'login.html';
+}
 
+user.innerText = '👤 ' + localStorage.getItem('role');
+
+function go(x){
+  location=x;
+}
+
+function logout(){
+  localStorage.clear();
+  location='login.html';
+}
+</script>
 </body>
 </html>
+
