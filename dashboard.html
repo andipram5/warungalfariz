@@ -1,32 +1,127 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Kasir</title>
+<title>Kasir Warung Alfariz</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Segoe UI,Arial;background:#f1f5f9}
-header{background:#16a34a;color:#fff;padding:15px 20px;font-size:20px;font-weight:600}
-.container{max-width:1200px;margin:auto;padding:20px}
-.card{background:#fff;border-radius:14px;padding:15px;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
-.grid{display:grid;grid-template-columns:2fr 3fr;gap:15px}
-input,button{padding:10px;border-radius:10px;border:1px solid #ccc;font-size:14px}
-input:focus{outline:none;border-color:#16a34a}
-button{background:#16a34a;color:#fff;border:none;cursor:pointer}
-button:hover{opacity:.9}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#f0fdf4,#ecfeff);
+  min-height:100vh;
+}
+
+header{
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:white;
+  padding:15px 25px;
+  font-size:20px;
+  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.header-btn button{
+  background:white;
+  border:none;
+  border-radius:10px;
+  padding:8px 14px;
+  margin-left:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1.2fr 2fr;
+  gap:18px;
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+.card h3{
+  margin-top:0;
+  margin-bottom:12px;
+}
+
+input,button{
+  padding:11px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+input:focus{
+  outline:none;
+  border-color:#16a34a;
+}
+
+.btn{
+  background:#16a34a;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn:hover{opacity:.9}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+
+th,td{
+  padding:8px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+}
+
 th{background:#f8fafc}
-.totalBox{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:700}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+.totalBox{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:15px;
+  font-size:20px;
+  font-weight:700;
+}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 
 <body>
-<header>KASIR WARUNG ALFARIZ</header>
+
+<header>
+  <div>🧾 Kasir Warung Alfariz</div>
+  <div class="header-btn">
+    <button onclick="location='index.html'">⬅ Dashboard</button>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
 
 <div class="container">
 
@@ -38,7 +133,7 @@ th{background:#f8fafc}
 <input id="nama" placeholder="Nama Produk"><br><br>
 <input id="qty" type="number" placeholder="Qty"><br><br>
 <input id="harga" type="number" placeholder="Harga"><br><br>
-<button onclick="addItem()">Tambah</button>
+<button class="btn" onclick="addItem()">Tambah</button>
 </div>
 
 <div class="card">
@@ -49,7 +144,7 @@ th{background:#f8fafc}
 
 <div class="totalBox">
 <div>Total: Rp <span id="total">0</span></div>
-<button onclick="checkout()">PROSES</button>
+<button class="btn" onclick="checkout()">PROSES</button>
 </div>
 </div>
 
@@ -61,8 +156,18 @@ th{background:#f8fafc}
 const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
 let cart = [];
 
+if(localStorage.getItem('login') !== 'true'){
+  location = 'login.html';
+}
+
+function logout(){
+  localStorage.clear();
+  location='login.html';
+}
+
 function addItem(){
-  if(!id.value || !nama.value || !qty.value || !harga.value) return alert('Lengkapi data');
+  if(!id.value || !nama.value || !qty.value || !harga.value) 
+    return alert('Lengkapi data');
 
   cart.push({
     id:id.value,
@@ -87,9 +192,9 @@ function render(){
     const tr=tbl.insertRow();
     tr.insertCell().innerText=it.nama;
     tr.insertCell().innerText=it.qty;
-    tr.insertCell().innerText=it.harga;
-    tr.insertCell().innerText=it.qty*it.harga;
-    tr.insertCell().innerHTML=`<button onclick="removeItem(${i})">X</button>`;
+    tr.insertCell().innerText=it.harga.toLocaleString();
+    tr.insertCell().innerText=(it.qty*it.harga).toLocaleString();
+    tr.insertCell().innerHTML=`<button onclick="removeItem(${i})">❌</button>`;
     t+=it.qty*it.harga;
   });
   total.innerText=t.toLocaleString();
@@ -111,17 +216,6 @@ function checkout(){
     });
 }
 </script>
-<script>
-if(localStorage.getItem('login') !== 'true'){
-  location = 'login.html';
-}
 
-function logout(){
-  localStorage.clear();
-  location='login.html';
-}
-</script>
 </body>
 </html>
-
-
