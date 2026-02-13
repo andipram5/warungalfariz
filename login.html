@@ -188,10 +188,17 @@ function login(){
   localStorage.setItem('role', d.role);
   location = 'dashboard.html';
 }
+
+if(d.status === 'ok'){
+  localStorage.setItem('login','true');
+  localStorage.setItem('role', d.role);
+  location = 'index.html';
+  
 </script>
 
 </body>
 </html>
+
 
 
 
