@@ -172,7 +172,7 @@ function login(){
     .then(d=>{
       if(d.status === 'ok'){
         localStorage.role = d.role;
-        location = 'index.html';
+        location = 'dashboard.html';
       } else {
         msg.style.color='red';
         msg.innerText = 'Login gagal';
@@ -192,6 +192,7 @@ function login(){
 
 </body>
 </html>
+
 
 
 
