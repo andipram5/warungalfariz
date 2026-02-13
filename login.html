@@ -183,11 +183,7 @@ function login(){
       msg.innerText = 'ERROR: '+err;
     });
 }
-  if(d.status === 'ok'){
-  localStorage.setItem('login','true');
-  localStorage.setItem('role', d.role);
-  location = 'dashboard.html';
-}
+
 
 if(d.status === 'ok'){
   localStorage.setItem('login','true');
@@ -198,6 +194,7 @@ if(d.status === 'ok'){
 
 </body>
 </html>
+
 
 
 
