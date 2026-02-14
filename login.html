@@ -1,53 +1,52 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Login Warung</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box}
+
 body{
   margin:0;
+  font-family:'Poppins',sans-serif;
   min-height:100vh;
+  background:linear-gradient(135deg,#06b6d4,#22c55e);
   display:flex;
-  align-items:center;
   justify-content:center;
-  font-family:'Segoe UI',Arial,sans-serif;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-}
-
-.container{
-  width:900px;
-  max-width:95%;
-  background:#fff;
-  border-radius:18px;
-  box-shadow:0 15px 40px rgba(0,0,0,.2);
-  display:grid;
-  grid-template-columns:1.1fr 1fr;
-  overflow:hidden;
-  animation:fade .5s ease;
+  align-items:center;
+  animation:fade 1s ease;
 }
 
 @keyframes fade{
-  from{opacity:0;transform:scale(.95)}
-  to{opacity:1;transform:scale(1)}
+  from{opacity:0}
+  to{opacity:1}
 }
 
-.left{
-  background:#f0fdf4;
-  padding:40px 30px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+.card{
+  width:95%;
+  max-width:380px;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(14px);
+  border-radius:26px;
+  padding:30px 25px;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
+  animation:slideUp .8s ease;
 }
 
-.left img{
-  width:100%;
-  max-width:280px;
-  animation:float 3s ease-in-out infinite;
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.logo{
+  width:120px;
+  margin:auto;
+  animation:float 4s ease-in-out infinite;
 }
 
 @keyframes float{
@@ -55,148 +54,84 @@ body{
   50%{transform:translateY(-10px)}
 }
 
-.left h2{
-  margin-top:15px;
-  color:#166534;
-}
-
-.left p{
-  text-align:center;
-  color:#166534;
-}
-
-.right{
-  padding:40px 35px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.right h3{
-  text-align:center;
-  font-size:26px;
-  color:#166534;
-  margin-bottom:25px;
+h2{
+  margin:12px 0 25px;
+  color:#064e3b;
+  font-weight:700;
 }
 
 input{
   width:100%;
-  padding:12px 14px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  margin-bottom:15px;
-  font-size:15px;
+  padding:14px;
+  margin:8px 0;
+  border-radius:14px;
+  border:none;
   outline:none;
-}
-
-input:focus{
-  border-color:#16a34a;
-  box-shadow:0 0 0 2px rgba(34,197,94,.2);
+  font-size:14px;
+  background:rgba(255,255,255,.9);
 }
 
 button{
+  margin-top:15px;
   width:100%;
-  padding:12px;
-  border-radius:10px;
+  padding:14px;
   border:none;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-  color:#fff;
-  font-size:16px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#22c55e,#06b6d4);
+  color:white;
+  font-weight:700;
+  font-size:15px;
   cursor:pointer;
-  transition:.2s;
+  transition:.3s;
 }
 
 button:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(0,0,0,.15);
-}
-
-#msg{
-  margin-top:12px;
-  text-align:center;
-  font-weight:600;
+  transform:scale(1.05);
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
 }
 
 .footer{
   margin-top:18px;
-  text-align:center;
-  font-size:13px;
-  color:#888;
-}
-
-@media(max-width:768px){
-  .container{grid-template-columns:1fr}
-  .left{display:none}
+  font-size:12px;
+  color:#064e3b;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="card">
 
-  <div class="left">
-    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-    <h2>Alfariz Store</h2>
-    <p>Sistem Kasir & Persediaan Modern<br>Cepat • Aman • Mudah</p>
-  </div>
+  <img class="logo" src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
 
-  <div class="right">
-    <h3>Login Warung</h3>
+  <h2>Login Warung</h2>
 
-    <input id="user" placeholder="Username">
-    <input id="pass" type="password" placeholder="Password">
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
 
-    <button onclick="login()">Login</button>
+  <button onclick="login()">LOGIN</button>
 
-    <p id="msg"></p>
-
-    <div class="footer">
-      Sistem Warung © 2026
-    </div>
-  </div>
+  <div class="footer">Sistem Warung © 2026</div>
 
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
+const API='ISI_URL_WEBAPP';
 
 function login(){
-  const url = API +
-    '?action=login' +
-    '&user=' + encodeURIComponent(user.value) +
-    '&pass=' + encodeURIComponent(pass.value);
-
-  fetch(url)
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.status === 'ok'){
-        localStorage.setItem('login','true');
-        localStorage.setItem('role', d.role);
-        location = 'index.html';
-      } else {
-        msg.style.color='red';
-        msg.innerText = 'Login gagal';
-      }
-    })
-    .catch(err=>{
-      msg.style.color='red';
-      msg.innerText = 'ERROR: '+err;
-    });
+  fetch(API+'?action=login&user='+user.value+'&pass='+pass.value)
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.status==='ok'){
+      localStorage.login='true';
+      localStorage.role=d.role;
+      location='index.html';
+    }else{
+      alert('Login gagal');
+    }
+  });
 }
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
