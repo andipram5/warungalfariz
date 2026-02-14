@@ -155,7 +155,10 @@ th{background:#ecfdf5}
     grid-template-columns:1fr;
   }
 }
-
+.laporan-box{
+  border:1px solid rgba(255,255,255,.4);
+  backdrop-filter:blur(14px);
+}
 </style>
 </head>
 
@@ -191,12 +194,12 @@ th{background:#ecfdf5}
 
 <div class="card totalBox">
 <h3>📥 Stok Masuk</h3>
-Rp <span id="masuk">0</span>
+QTY<span id="masuk">0</span>
 </div>
 
 <div class="card totalBox">
 <h3>📤 Stok Keluar</h3>
-Rp <span id="keluar">0</span>
+QTY<span id="keluar">0</span>
 </div>
 
 </div>
@@ -324,6 +327,7 @@ function filterTanggal(){
 
 </body>
 </html>
+
 
 
 
