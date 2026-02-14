@@ -141,6 +141,29 @@ Rp <span id="keluar">0</span>
 </div>
 
 </div>
+<div class="card" style="margin-top:20px">
+  <h3>📆 Filter Pendapatan</h3>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <input type="date" id="dari">
+    <input type="date" id="sampai">
+    <button class="btn" onclick="filterTanggal()">Tampilkan</button>
+  </div>
+
+  <h2 style="margin-top:15px">
+    Total Pendapatan: Rp <span id="totalPendapatan">0</span>
+  </h2>
+
+  <table id="tblFilter">
+    <tr>
+      <th>Tanggal</th>
+      <th>Nota</th>
+      <th>Produk</th>
+      <th>Qty</th>
+      <th>Total</th>
+    </tr>
+  </table>
+</div>
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
@@ -185,8 +208,40 @@ d.stok.forEach(p=>{
 }
 
 load();
+function filterTanggal(){
+  if(!dari.value || !sampai.value)
+    return alert('Lengkapi tanggal');
+
+  fetch(API + '?action=filterTanggal&dari=' + dari.value + '&sampai=' + sampai.value)
+    .then(r=>r.json())
+    .then(d=>{
+      let total = 0;
+      tblFilter.innerHTML=`
+        <tr>
+          <th>Tanggal</th>
+          <th>Nota</th>
+          <th>Produk</th>
+          <th>Qty</th>
+          <th>Total</th>
+        </tr>`;
+
+      d.data.forEach(r=>{
+        const tr = tblFilter.insertRow();
+        tr.insertCell().innerText = r[1];
+        tr.insertCell().innerText = r[2];
+        tr.insertCell().innerText = r[4];
+        tr.insertCell().innerText = r[5];
+        tr.insertCell().innerText = r[7].toLocaleString();
+
+        total += Number(r[7]);
+      });
+
+      totalPendapatan.innerText = total.toLocaleString();
+    });
+}
 </script>
 
 </body>
 </html>
+
 
