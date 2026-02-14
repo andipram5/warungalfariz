@@ -157,12 +157,12 @@ fetch(API+'?action=listProduk')
   tbl.innerHTML='';
   d.forEach(r=>{
     const tr=tbl.insertRow();
-    tr.insertCell().innerText = r[1]; // ID
-    tr.insertCell().innerText = r[2]; // Barcode
-    tr.insertCell().innerText = r[3]; // Nama
-    tr.insertCell().innerText = 'Rp ' + Number(r[4]).toLocaleString(); // Harga Beli
-    tr.insertCell().innerText = 'Rp ' + Number(r[5]).toLocaleString(); // Harga Jual
-    tr.insertCell().innerText = r[6]; // Stok
+    tr.insertCell().innerText = r[0]; // ID
+    tr.insertCell().innerText = r[1]; // Barcode
+    tr.insertCell().innerText = r[2]; // Nama
+    tr.insertCell().innerText = 'Rp ' + Number(r[3]).toLocaleString(); // Harga Beli
+    tr.insertCell().innerText = 'Rp ' + Number(r[4]).toLocaleString(); // Harga Jual
+    tr.insertCell().innerText = r[5]; // Stok
   });
 });
 }
@@ -212,6 +212,7 @@ load();
 
 </body>
 </html>
+
 
 
 
