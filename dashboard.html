@@ -251,10 +251,10 @@ function checkout(){
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='ok'){
-        cartBackup = [...cart];   // simpan dulu isi keranjang
-        tampilStruk(d.nota);     // tampilkan popup struk
-        cart = [];               // baru kosongkan keranjang
-        render();
+  cartBackup = JSON.parse(JSON.stringify(cart)); // clone aman
+  tampilStruk(d.nota);   // tampilkan struk dulu
+  cart = [];             // baru kosongkan
+  render();
 } else alert('Gagal simpan transaksi');
     });
 }
@@ -287,15 +287,18 @@ function tampilStruk(nota){
     ${it.qty} x ${it.harga.toLocaleString()} = ${(it.qty*it.harga).toLocaleString()}<br>`;
   });
 
+  const totalBayar = cartBackup.reduce((a,b)=>a+(b.qty*b.harga),0);
+
   html += `<center>
     -----------------------------<br>
-    <b>TOTAL : Rp ${total.innerText}</b><br><br>
+    <b>TOTAL : Rp ${totalBayar.toLocaleString()}</b><br><br>
     Terima Kasih 🙏
   </center>`;
 
   struk.innerHTML = html;
   popup.style.display='flex';
 }
+
 
 function tutupPopup(){
   popup.style.display='none';
@@ -314,6 +317,7 @@ function printStruk(){
 
 </body>
 </html>
+
 
 
 
