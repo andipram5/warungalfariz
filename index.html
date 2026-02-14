@@ -12,10 +12,18 @@
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
   min-height:100vh;
-  display:flex;
-  flex-direction:column;
+  background:linear-gradient(135deg,#0f766e,#14b8a6,#2dd4bf);
+  background-size:300% 300%;
+  animation:gradien 12s ease infinite;
+  overflow-x:hidden;
+  <img src="https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json" id="bgAnim">
+}
+
+@keyframes gradien{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 header{
@@ -110,6 +118,14 @@ footer{
 .hero img{margin-top:15px}
 .hero-text h1{font-size:28px}
 }
+#bgAnim{
+  position:fixed;
+  right:-40px;
+  bottom:-30px;
+  width:350px;
+  opacity:.35;
+  pointer-events:none;
+}
 </style>
 </head>
 
@@ -186,10 +202,17 @@ function logout(){
   location='login.html';
 }
 </script>
-
-
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<lottie-player 
+  src="https://assets9.lottiefiles.com/packages/lf20_jcikwtux.json"
+  background="transparent"
+  speed="1"
+  style="width:300px;height:300px;position:fixed;bottom:-20px;right:-20px;opacity:.5"
+  loop autoplay>
+</lottie-player>
 </body>
 </html>
+
 
 
 
