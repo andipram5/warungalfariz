@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Login Warung</title>
+<title>Login Store</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -104,19 +104,19 @@ button:hover{
 
   <img class="logo" src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
 
-  <h2>Login Warung</h2>
+  <h2>Alfariz Store</h2>
 
   <input id="user" placeholder="Username">
   <input id="pass" type="password" placeholder="Password">
 
   <button onclick="login()">LOGIN</button>
 
-  <div class="footer">Sistem Warung © 2026</div>
+  <div class="footer">Sistem Store © 2026</div>
 
 </div>
 
 <script>
-const API='ISI_URL_WEBAPP';
+const API='https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
 
 function login(){
   fetch(API+'?action=login&user='+user.value+'&pass='+pass.value)
@@ -135,3 +135,4 @@ function login(){
 
 </body>
 </html>
+
