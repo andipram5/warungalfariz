@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Stok Keluar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:Poppins;
+  background:
+    linear-gradient(rgba(22,163,74,.85),rgba(34,197,94,.85)),
+    url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1600&q=80');
+  background-size:cover;
+  min-height:100vh;
+}
+
+.box{
+  max-width:500px;
+  margin:60px auto;
+  background:rgba(255,255,255,.95);
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,.3);
+}
+
+h2{text-align:center}
+
+input,textarea,button{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  margin:8px 0;
+  font-family:Poppins;
+}
+
+textarea{resize:none}
+
+button{
+  background:linear-gradient(135deg,#dc2626,#ef4444);
+  border:none;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:hover{opacity:.9}
+
+.back{
+  background:#555;
+  margin-top:5px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>📤 Input Stok Keluar</h2>
+
+<input id="barcode" placeholder="Scan Barcode" oninput="scan(this.value)">
+<input id="id" placeholder="ID Produk">
+<input id="nama" placeholder="Nama Produk">
+<input id="qty" type="number" placeholder="Jumlah">
+
+<textarea id="ket" placeholder="Keterangan (rusak / expired / hilang / retur dll)"></textarea>
+
+<button onclick="simpan()">SIMPAN</button>
+<button class="back" onclick="location='index.html'">⬅ Kembali</button>
+</div>
+
+<script>
+const API = 'ISI_URL_WEBAPP';
+
+function scan(code){
+  if(code.length < 6) return;
+
+  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'){
+        id.value = d.id;
+        nama.value = d.nama;
+        qty.focus();
+      }
+    });
+}
+
+function simpan(){
+  if(!id.value || !nama.value || !qty.value || !ket.value)
+    return alert('Lengkapi data');
+
+  const url = API + 
+    '?action=stokKeluar' +
+    '&id=' + encodeURIComponent(id.value) +
+    '&nama=' + encodeURIComponent(nama.value) +
+    '&qty=' + qty.value +
+    '&ket=' + encodeURIComponent(ket.value);
+
+  fetch(url)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'){
+        alert('Stok keluar berhasil ✔');
+        barcode.value='';
+        id.value='';
+        nama.value='';
+        qty.value='';
+        ket.value='';
+      }
+    });
+}
+</script>
+
+</body>
+</html>
