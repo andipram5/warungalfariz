@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Input Stok Masuk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<style>
+body{
+  margin:0;
+  font-family:Poppins;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  min-height:100vh;
+}
+.box{
+  max-width:500px;
+  margin:60px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:12px;
+  border:1px solid #ccc;
+}
+button{
+  background:#16a34a;
+  color:white;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+button:hover{opacity:.9}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>📦 Input Stok Masuk</h2>
+
+<input id="barcode" placeholder="Scan / Input Barcode" oninput="scan(this.value)">
+<input id="id" placeholder="ID Produk">
+<input id="nama" placeholder="Nama Produk">
+<input id="qty" type="number" placeholder="Jumlah">
+<input id="harga" type="number" placeholder="Harga Beli">
+
+<button onclick="simpan()">💾 Simpan</button>
+<button onclick="location='index.html'" style="background:#555">⬅ Kembali</button>
+</div>
+
+<script>
+const API='ISI_URL_WEBAPP';
+
+function scan(code){
+  if(code.length<5) return;
+
+  fetch(API+'?action=cariProduk&barcode='+encodeURIComponent(code))
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.status==='ok'){
+      id.value = d.id;
+      nama.value = d.nama;
+      harga.value = d.beli || '';
+      qty.focus();
+    }
+  });
+}
+
+function simpan(){
+  if(!id.value||!nama.value||!qty.value||!harga.value)
+    return alert('Lengkapi data');
+
+  const url = API + 
+    '?action=stokMasuk' +
+    '&id=' + encodeURIComponent(id.value) +
+    '&nama=' + encodeURIComponent(nama.value) +
+    '&qty=' + qty.value +
+    '&harga=' + harga.value;
+
+  fetch(url)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'){
+        alert('Stok masuk berhasil ✔');
+        barcode.value='';
+        id.value='';
+        nama.value='';
+        qty.value='';
+        harga.value='';
+      }
+    });
+}
+</script>
+
+</body>
+</html>
