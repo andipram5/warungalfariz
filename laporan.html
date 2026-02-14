@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Warung PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:Poppins;
+  background:linear-gradient(rgba(22,163,74,.9),rgba(34,197,94,.9)),
+  url('https://assets.codepen.io/605876/food-bg.png');
+  background-size:cover;
+  min-height:100vh;
+}
+
+header{
+  background:rgba(255,255,255,.2);
+  backdrop-filter:blur(10px);
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+  color:white;
+  font-size:20px;
+  font-weight:600;
+}
+
+.container{
+  max-width:1300px;
+  margin:auto;
+  padding:20px;
+}
+
+.filter{
+  display:flex;
+  gap:10px;
+}
+
+select,button{
+  padding:10px;
+  border-radius:12px;
+  border:none;
+  font-family:Poppins;
+}
+
+button{
+  background:#16a34a;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:15px;
+  margin-top:20px;
+}
+
+.card{
+  background:rgba(255,255,255,.95);
+  padding:15px;
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  animation:fade .6s ease;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(15px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:8px;
+  border-bottom:1px solid #eee;
+}
+
+th{background:#ecfdf5}
+
+.totalBox{
+  font-size:22px;
+  font-weight:700;
+  text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div>📊 Laporan Warung ALFARIZ</div>
+<button onclick="location='index.html'">⬅ Dashboard</button>
+</header>
+
+<div class="container">
+
+<div class="filter">
+<select id="bulan">
+  <option value="1">Januari</option><option value="2">Februari</option>
+  <option value="3">Maret</option><option value="4">April</option>
+  <option value="5">Mei</option><option value="6">Juni</option>
+  <option value="7">Juli</option><option value="8">Agustus</option>
+  <option value="9">September</option><option value="10">Oktober</option>
+  <option value="11">November</option><option value="12">Desember</option>
+</select>
+
+<select id="tahun"></select>
+<button onclick="load()">Tampilkan</button>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>📋 Transaksi</h3>
+<table id="tbl"></table>
+</div>
+
+<div class="card totalBox">
+<h3>📥 Stok Masuk</h3>
+Rp <span id="masuk">0</span>
+</div>
+
+<div class="card totalBox">
+<h3>📤 Stok Keluar</h3>
+Rp <span id="keluar">0</span>
+</div>
+
+</div>
+
+<div class="card" style="margin-top:20px">
+<h3>📦 Rekap Stok Terakhir</h3>
+<table id="stok"></table>
+</div>
+
+</div>
+
+<script>
+const API = 'ISI_URL_WEBAPP';
+
+const th = new Date().getFullYear();
+for(let i=th;i>=2023;i--){
+  tahun.innerHTML += `<option>${i}</option>`;
+}
+
+bulan.value = new Date().getMonth()+1;
+
+function load(){
+fetch(API + '?action=laporan&bulan='+bulan.value+'&tahun='+tahun.value)
+.then(r=>r.json())
+.then(d=>{
+
+tbl.innerHTML='<tr><th>Tgl</th><th>Nota</th><th>Produk</th><th>Qty</th><th>Total</th></tr>';
+let omzet=0;
+
+d.transaksi.forEach(r=>{
+  const tr=tbl.insertRow();
+  tr.insertCell().innerText=new Date(r[1]).toLocaleDateString();
+  tr.insertCell().innerText=r[2];
+  tr.insertCell().innerText=r[4];
+  tr.insertCell().innerText=r[5];
+  tr.insertCell().innerText=r[7].toLocaleString();
+  omzet+=r[7];
+});
+
+masuk.innerText=d.totalMasuk.toLocaleString();
+keluar.innerText=d.totalKeluar.toLocaleString();
+
+stok.innerHTML='<tr><th>ID</th><th>Nama</th><th>Stok</th></tr>';
+d.stok.forEach(p=>{
+  const tr=stok.insertRow();
+  tr.insertCell().innerText=p[0];
+  tr.insertCell().innerText=p[2];
+  tr.insertCell().innerText=p[5];
+});
+
+});
+}
+
+load();
+</script>
+
+</body>
+</html>
