@@ -195,6 +195,7 @@ th{
   
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
+  let cartBackup = [];
 let cart = [];
 
 if(localStorage.getItem('login') !== 'true'){
@@ -250,10 +251,11 @@ function checkout(){
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='ok'){
-        alert('Transaksi sukses! Nota: '+d.nota);
-        cart=[];
+        cartBackup = [...cart];   // simpan dulu isi keranjang
+        tampilStruk(d.nota);     // tampilkan popup struk
+        cart = [];               // baru kosongkan keranjang
         render();
-      } else alert('Gagal simpan transaksi');
+} else alert('Gagal simpan transaksi');
     });
 }
   
@@ -280,7 +282,7 @@ function tampilStruk(nota){
     -----------------------------
   </center>`;
 
-  cart.forEach(it=>{
+  cartBackup.forEach(it=>{
     html += `${it.nama}<br>
     ${it.qty} x ${it.harga.toLocaleString()} = ${(it.qty*it.harga).toLocaleString()}<br>`;
   });
@@ -312,6 +314,7 @@ function printStruk(){
 
 </body>
 </html>
+
 
 
 
