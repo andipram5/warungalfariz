@@ -185,7 +185,14 @@ th{
 </div>
 
 </div>
-
+<div id="popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#fff;width:300px;border-radius:12px;padding:15px;font-family:monospace">
+    <div id="struk"></div>
+    <button onclick="printStruk()" class="btn" style="margin-top:10px">🖨 Cetak</button>
+    <button onclick="tutupPopup()" class="btn" style="margin-top:6px;background:#ccc;color:#333">Tutup</button>
+  </div>
+</div>
+  
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
 let cart = [];
@@ -263,10 +270,49 @@ function scanBarcode(code){
       }
     });
 }
+  
+function tampilStruk(nota){
+  let html = `<center>
+    <b>WARUNG ALFARIZ</b><br>
+    Smart POS System<br><br>
+    Nota : ${nota}<br>
+    ${new Date().toLocaleString()}<br>
+    -----------------------------
+  </center>`;
+
+  cart.forEach(it=>{
+    html += `${it.nama}<br>
+    ${it.qty} x ${it.harga.toLocaleString()} = ${(it.qty*it.harga).toLocaleString()}<br>`;
+  });
+
+  html += `<center>
+    -----------------------------<br>
+    <b>TOTAL : Rp ${total.innerText}</b><br><br>
+    Terima Kasih 🙏
+  </center>`;
+
+  struk.innerHTML = html;
+  popup.style.display='flex';
+}
+
+function tutupPopup(){
+  popup.style.display='none';
+}
+
+function printStruk(){
+  const w = window.open('', '', 'width=300,height=500');
+  w.document.write(`<pre>${struk.innerHTML}</pre>`);
+  w.document.close();
+  w.focus();
+  w.print();
+  w.close();
+}
+
 </script>
 
 </body>
 </html>
+
 
 
 
