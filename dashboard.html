@@ -204,14 +204,90 @@ th{
   </div>
 </div>
   
+<script src="https://unpkg.com/html5-qrcode"></script>
+
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
-  let cartBackup = [];
+
+let cartBackup = [];
 let cart = [];
 
 if(localStorage.getItem('login') !== 'true'){
   location = 'login.html';
 }
+
+/* ==================== SCANNER ==================== */
+
+function openScanner(){
+  const modal = document.createElement('div');
+  modal.style = `
+    position:fixed; inset:0; background:rgba(0,0,0,.7);
+    display:flex; align-items:center; justify-content:center; z-index:9999;
+  `;
+
+  modal.innerHTML = `
+    <div style="background:#fff;padding:15px;border-radius:12px;width:300px">
+      <div id="reader"></div>
+      <button class="btn" style="margin-top:8px" onclick="closeScanner()">Tutup</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  window.qrScanner = new Html5Qrcode("reader");
+
+  qrScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    (decoded) => {
+      id.value = decoded;
+      scanBarcode(decoded);
+      closeScanner();
+    }
+  );
+}
+
+function closeScanner(){
+  if(window.qrScanner){
+    qrScanner.stop();
+  }
+  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
+}
+
+/* ==================== PRODUK ==================== */
+
+loadProduk();
+
+function loadProduk(){
+  fetch(API + '?action=listProduk')
+    .then(r=>r.json())
+    .then(d=>{
+      listProduk.innerHTML='';
+      d.forEach(p=>{
+        const opt = document.createElement('option');
+        opt.value = p[2]; // nama produk
+        listProduk.appendChild(opt);
+      });
+    });
+}
+
+/* ==================== BARCODE ==================== */
+
+function scanBarcode(code){
+  if(code.length < 5) return;
+
+  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status === 'ok'){
+        nama.value  = d.nama;
+        harga.value = d.jual;
+        qty.focus();
+      }
+    });
+}
+
+/* ==================== KASIR ==================== */
 
 function logout(){
   localStorage.clear();
@@ -262,28 +338,16 @@ function checkout(){
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='ok'){
-  cartBackup = JSON.parse(JSON.stringify(cart)); // clone aman
-  tampilStruk(d.nota);   // tampilkan struk dulu
-  cart = [];             // baru kosongkan
-  render();
-} else alert('Gagal simpan transaksi');
+        cartBackup = JSON.parse(JSON.stringify(cart));
+        tampilStruk(d.nota);
+        cart = [];
+        render();
+      } else alert('Gagal simpan transaksi');
     });
 }
-  
-function scanBarcode(code){
-  if(code.length < 6) return;
 
-  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.status === 'ok'){
-        nama.value  = d.nama;
-        harga.value = d.jual;
-        qty.focus();
-      }
-    });
-}
-  
+/* ==================== STRUK ==================== */
+
 function tampilStruk(nota){
   let html = `<center>
     <b>WARUNG ALFARIZ</b><br>
@@ -310,7 +374,6 @@ function tampilStruk(nota){
   popup.style.display='flex';
 }
 
-
 function tutupPopup(){
   popup.style.display='none';
 }
@@ -323,8 +386,7 @@ function printStruk(){
   w.print();
   w.close();
 }
-  
-<script src="https://unpkg.com/html5-qrcode"></script>
+</script>
 
 <script>
 function openScanner(){
@@ -382,6 +444,7 @@ function loadProduk(){
 
 </body>
 </html>
+
 
 
 
