@@ -183,7 +183,7 @@ th{
 
 <input id="id" placeholder="ID Produk">
 <div style="display:flex;gap:8px">
-  <input id="barcode" placeholder="Barcode" style="flex:1">
+  <input id="barcode" placeholder="Barcode" style="flex:1" oninput="cariProdukManual(this.value)">
   <button onclick="openScanner()" style="width:120px">📷 Scan</button>
 </div>
 <input id="nama" placeholder="Nama Produk">
@@ -365,13 +365,22 @@ async function startCamera(){
 
       const codes = await detector.detect(video);
       if(codes.length){
-        const code = codes[0].rawValue;
-        barcode.value = code;
-        closeScanner();
-      } else {
-        scanLoopId = requestAnimationFrame(scanLoop);
+  const code = codes[0].rawValue;
+  barcode.value = code;
+
+  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status === 'ok'){
+        id.value    = d.id || '';
+        nama.value  = d.nama || '';
+        beli.value  = d.beli || '';
+        jual.value  = d.jual || '';
       }
-    };
+    });
+
+  closeScanner();
+}
 
     scanLoop();
 
@@ -396,10 +405,28 @@ function closeScanner(){
   const modal = document.getElementById("scanModal");
   if(modal) modal.remove();
 }
+  
+function cariProdukManual(code){
+  if(code.length < 5) return;
+
+  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status === 'ok'){
+        id.value    = d.id || '';
+        nama.value  = d.nama || '';
+        beli.value  = d.beli || '';
+        jual.value  = d.jual || '';
+      }
+    });
+}
+
 </script>
+
 
 </body>
 </html>
+
 
 
 
