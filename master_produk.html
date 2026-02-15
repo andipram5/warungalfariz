@@ -276,18 +276,18 @@ function simpan(){
 
   fetch(url)
     .then(r=>r.json())
-    .then(d=>{
-      if(d === 'ok'){
-        msg.style.color='green';
-        msg.innerText='✅ Produk berhasil disimpan';
-        id.value='';barcode.value='';nama.value='';
-        beli.value='';jual.value='';stok.value='';
+     .then(d=>{
+        if(d.status === 'ok' || d === 'ok'){
+          msg.style.color='green';
+          msg.innerText='✅ Produk berhasil disimpan';
+          id.value='';barcode.value='';nama.value='';
+          beli.value='';jual.value='';stok.value='';
         load();
-      }else{
-        msg.style.color='red';
-        msg.innerText='❌ Gagal simpan';
-      }
-    })
+    }else{
+          msg.style.color='red';
+          msg.innerText='❌ Gagal simpan: '+JSON.stringify(d);
+  }
+})
     .catch(err=>{
       msg.style.color='red';
       msg.innerText='ERROR: '+err;
@@ -400,6 +400,7 @@ function closeScanner(){
 
 </body>
 </html>
+
 
 
 
