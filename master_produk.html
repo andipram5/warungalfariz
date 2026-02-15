@@ -353,18 +353,22 @@ async function startCamera(){
   try {
 
     codeReader = new ZXing.BrowserMultiFormatReader();
-
     const video = document.getElementById('video');
 
     const devices = await ZXing.BrowserCodeReader.listVideoInputDevices();
+
+    if(devices.length === 0){
+      alert("Kamera tidak ditemukan");
+      return;
+    }
+
     const cameraId = devices[devices.length - 1].deviceId;
 
     codeReader.decodeFromVideoDevice(cameraId, video, (result, err) => {
       if(result){
-
         const code = result.text;
-        barcode.value = code;
 
+        barcode.value = code;
         cariProdukManual(code);
 
         closeScanner();
@@ -377,28 +381,16 @@ async function startCamera(){
   }
 }
 
-    scanLoop();
-
-  } catch(err){
-    alert("Gagal membuka kamera: " + err);
-    closeScanner();
-  }
-}
 function closeScanner(){
-
   if(codeReader){
     codeReader.reset();
     codeReader = null;
   }
 
-  if(videoStream){
-    videoStream.getTracks().forEach(t=>t.stop());
-    videoStream = null;
-  }
-
   const modal = document.getElementById("scanModal");
   if(modal) modal.remove();
 }
+
   
 function cariProdukManual(code){
   if(code.length < 5) return;
@@ -438,6 +430,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
