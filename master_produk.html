@@ -295,17 +295,26 @@ function simpan(){
   fetch(url)
     .then(r=>r.json())
      .then(d=>{
-        if(d.status === 'ok' || d === 'ok'){
-          msg.style.color='green';
-          msg.innerText='✅ Produk berhasil disimpan';
-          id.value='';barcode.value='';nama.value='';
-          beli.value='';jual.value='';stok.value='';
-        load();
-    }else{
-          msg.style.color='red';
-          msg.innerText='❌ Gagal simpan: '+JSON.stringify(d);
+  if(d.status === 'ok'){
+    if(d.mode === 'update'){
+      alert('✅ Stok produk ditambahkan');
+    } else {
+      alert('✅ Produk baru ditambahkan');
+    }
+
+    id.value='';
+    barcode.value='';
+    nama.value='';
+    beli.value='';
+    jual.value='';
+    stok.value='';
+    load();
+
+  } else {
+    alert('❌ Gagal: ' + JSON.stringify(d));
   }
 })
+
     .catch(err=>{
       msg.style.color='red';
       msg.innerText='ERROR: '+err;
@@ -459,6 +468,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
