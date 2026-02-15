@@ -355,44 +355,64 @@ function printStruk(){
 <script>
 
 function openScanner(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    alert("Browser tidak mendukung kamera");
+    return;
+  }
+
   const modal = document.createElement('div');
   modal.style = `
     position:fixed; inset:0;
-    background:rgba(0,0,0,.75);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
+    background:rgba(0,0,0,.8);
+    display:flex; flex-direction:column;
+    justify-content:center; align-items:center;
+    z-index:99999;
   `;
 
   modal.innerHTML = `
-    <div style="background:#fff;padding:15px;border-radius:14px;width:320px">
-      <div id="scanner" style="width:100%;height:300px"></div>
-      <button class="btn" style="margin-top:10px" onclick="closeScanner()">Tutup</button>
-    </div>
+    <video id="video" autoplay playsinline
+      style="width:90%;max-width:350px;border-radius:12px;"></video>
+    <button class="btn" style="margin-top:10px" onclick="closeScanner()">Tutup</button>
   `;
 
   document.body.appendChild(modal);
 
-  codeReader = new ZXing.BrowserMultiFormatReader();
+  navigator.mediaDevices.getUserMedia({
+    video:{ facingMode:{ ideal:"environment" }}
+  })
+  .then(stream=>{
+    const video = document.getElementById('video');
+    video.srcObject = stream;
+    window._scannerStream = stream;
 
-  codeReader.decodeFromVideoDevice(
-    { facingMode: "environment" },
-    'scanner',
-    (result, err) => {
-      if (result) {
-        const code = result.text;
+    const detector = new BarcodeDetector({
+      formats: ["ean_13","ean_8","code_128","upc_a","upc_e"]
+    });
+
+    const scanLoop = async ()=>{
+      if(!video.videoWidth) return requestAnimationFrame(scanLoop);
+      const barcodes = await detector.detect(video);
+      if(barcodes.length){
+        const code = barcodes[0].rawValue;
         id.value = code;
         scanBarcode(code);
         closeScanner();
+      } else {
+        requestAnimationFrame(scanLoop);
       }
-    }
-  );
+    };
+    scanLoop();
+  })
+  .catch(err=>{
+    alert("Kamera gagal dibuka: "+err);
+  });
 }
 
 function closeScanner(){
-  if(codeReader) codeReader.reset();
-  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
+  if(window._scannerStream){
+    window._scannerStream.getTracks().forEach(t=>t.stop());
+  }
+  document.querySelectorAll('div[style*="z-index:99999"]').forEach(el=>el.remove());
 }
 
   
@@ -415,6 +435,7 @@ function loadProduk(){
 
 </body>
 </html>
+
 
 
 
