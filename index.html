@@ -126,6 +126,23 @@ footer{
   opacity:.35;
   pointer-events:none;
 }
+.reorder-alert{
+  margin:12px 15px;
+  padding:12px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:white;
+  font-weight:600;
+  text-align:center;
+  animation:blink 1s infinite;
+  box-shadow:0 5px 15px rgba(0,0,0,.3);
+}
+
+@keyframes blink{
+  0%{opacity:1}
+  50%{opacity:.4}
+  100%{opacity:1}
+}
 </style>
 </head>
 
@@ -181,7 +198,9 @@ footer{
     <h4>Logout</h4>
   </div>
 </div>
-
+  <div id="reorderAlert" class="reorder-alert" style="display:none">
+  📦 Auto Reorder Alert — Stok menipis!
+  </div>
 <footer>
 © 2026 Warung — Smart POS System
 </footer>
@@ -212,6 +231,7 @@ function logout(){
 </lottie-player>
 </body>
 </html>
+
 
 
 
