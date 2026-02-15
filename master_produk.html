@@ -264,8 +264,9 @@ function scanBarcode(code){
     .then(d=>{
       if(d.status === 'ok'){
         nama.value  = d.nama;
+        beli.value = d.beli;
         harga.value = d.jual;
-        qty.focus();
+        stok.focus();
       }
     });
 }
@@ -471,6 +472,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
