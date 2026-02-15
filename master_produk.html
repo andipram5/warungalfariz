@@ -369,15 +369,33 @@ async function startCamera(){
   barcode.value = code;
 
   fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.status === 'ok'){
-        id.value    = d.id || '';
-        nama.value  = d.nama || '';
-        beli.value  = d.beli || '';
-        jual.value  = d.jual || '';
-      }
-    });
+  .then(r=>r.json())
+  .then(d=>{
+
+    console.log('RESP API:', d);
+
+    let p = null;
+
+    if(d.status === 'ok'){
+      if(d.id) p = d;
+      else if(d.data) p = d.data;
+      else if(d.row) p = {
+        id:   d.row[0],
+        nama: d.row[2],
+        beli: d.row[3],
+        jual: d.row[4],
+        stok: d.row[5]
+      };
+    }
+
+    if(!p) return;
+
+    id.value    = p.id   || '';
+    nama.value  = p.nama|| '';
+    beli.value  = p.beli|| '';
+    jual.value  = p.jual|| '';
+    stok.value  = p.stok|| '';
+  });
 
   closeScanner();
 }
@@ -412,12 +430,30 @@ function cariProdukManual(code){
   fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
     .then(r=>r.json())
     .then(d=>{
+
+      console.log('RESP API:', d); // DEBUG
+
+      let p = null;
+
       if(d.status === 'ok'){
-        id.value    = d.id || '';
-        nama.value  = d.nama || '';
-        beli.value  = d.beli || '';
-        jual.value  = d.jual || '';
+        if(d.id) p = d;
+        else if(d.data) p = d.data;
+        else if(d.row) p = {
+          id:   d.row[0],
+          nama: d.row[2],
+          beli: d.row[3],
+          jual: d.row[4],
+          stok: d.row[5]
+        };
       }
+
+      if(!p) return;
+
+      id.value    = p.id   || '';
+      nama.value  = p.nama|| '';
+      beli.value  = p.beli|| '';
+      jual.value  = p.jual|| '';
+      stok.value  = p.stok|| '';
     });
 }
 
@@ -426,6 +462,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
