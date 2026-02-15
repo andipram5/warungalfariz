@@ -221,6 +221,24 @@ function logout(){
   localStorage.clear();
   location='login.html';
 }
+function cekAutoReorder(){
+  fetch(API + '?action=cekReorder')
+    .then(r=>r.json())
+    .then(d=>{
+      const el = document.getElementById('reorderAlert');
+
+      if(d.count > 0){
+        el.style.display='block';
+        el.innerHTML = `📦 ${d.count} Produk Stok Menipis — Segera Reorder!`;
+      } else {
+        el.style.display='none';
+      }
+    });
+}
+
+// cek setiap 10 detik
+setInterval(cekAutoReorder,10000);
+cekAutoReorder();
 </script>
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <lottie-player 
@@ -232,6 +250,7 @@ function logout(){
 </lottie-player>
 </body>
 </html>
+
 
 
 
