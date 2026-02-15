@@ -169,8 +169,13 @@ th{
 
 <div class="card">
 <h3>🛒 Input Produk</h3>
-<input id="id" placeholder="ID / Barcode" oninput="scanBarcode(this.value)"><br><br>
-<input id="nama" placeholder="Nama Produk"><br><br>
+<input id="id" placeholder="Scan Barcode" 
+       oninput="scanBarcode(this.value)" 
+       inputmode="numeric" 
+       pattern="[0-9]*">
+<button class="btn" style="margin-top:8px" onclick="openScanner()">📷 Scan Kamera</button><br><br>
+<input id="nama" list="listProduk" placeholder="Nama Produk">
+<datalist id="listProduk"></datalist><br><br>
 <input id="qty" type="number" placeholder="Qty"><br><br>
 <input id="harga" type="number" placeholder="Harga"><br><br>
 <button class="btn" onclick="addItem()">Tambah</button>
@@ -318,11 +323,66 @@ function printStruk(){
   w.print();
   w.close();
 }
+  
+<script src="https://unpkg.com/html5-qrcode"></script>
 
+<script>
+function openScanner(){
+  const modal = document.createElement('div');
+  modal.style = `
+    position:fixed; inset:0; background:rgba(0,0,0,.7);
+    display:flex; align-items:center; justify-content:center; z-index:9999;
+  `;
+
+  modal.innerHTML = `
+    <div style="background:#fff;padding:15px;border-radius:12px;width:300px">
+      <div id="reader"></div>
+      <button class="btn" style="margin-top:8px" onclick="closeScanner()">Tutup</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  window.qrScanner = new Html5Qrcode("reader");
+
+  qrScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    (decoded) => {
+      id.value = decoded;
+      scanBarcode(decoded);
+      closeScanner();
+    }
+  );
+}
+
+function closeScanner(){
+  if(window.qrScanner){
+    qrScanner.stop();
+  }
+  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
+}
+  
+loadProduk();
+
+function loadProduk(){
+  fetch(API + '?action=listProduk')
+    .then(r=>r.json())
+    .then(d=>{
+      listProduk.innerHTML='';
+      d.forEach(p=>{
+        const opt = document.createElement('option');
+        opt.value = p[2]; // nama produk
+        listProduk.appendChild(opt);
+      });
+    });
+}
+</script>
 </script>
 
 </body>
 </html>
+
 
 
 
