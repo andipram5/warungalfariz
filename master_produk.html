@@ -347,55 +347,34 @@ function openScanner(){
   startCamera();
 }
 
+let codeReader = null;
+
 async function startCamera(){
   try {
-    videoStream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:{ ideal:"environment" }}
-    });
+
+    codeReader = new ZXing.BrowserMultiFormatReader();
 
     const video = document.getElementById('video');
-    video.srcObject = videoStream;
 
-    const detector = new BarcodeDetector({
-      formats:["ean_13","ean_8","code_128","upc_a","upc_e"]
+    const devices = await ZXing.BrowserCodeReader.listVideoInputDevices();
+    const cameraId = devices[devices.length - 1].deviceId;
+
+    codeReader.decodeFromVideoDevice(cameraId, video, (result, err) => {
+      if(result){
+
+        const code = result.text;
+        barcode.value = code;
+
+        cariProdukManual(code);
+
+        closeScanner();
+      }
     });
 
-    const scanLoop = async ()=>{
-      if(!video.videoWidth) return requestAnimationFrame(scanLoop);
-
-      const codes = await detector.detect(video);
-      if(codes.length){
-  const code = codes[0].rawValue;
-  barcode.value = code;
-
-  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
-  .then(r=>r.json())
-  .then(d=>{
-
-    console.log('RESP API:', d);
-
-    let row = null;
-
-    if(Array.isArray(d)){
-      row = d;
-    } else if(d.row){
-      row = d.row;
-    } else if(d.data){
-      row = d.data;
-    }
-
-    if(!row) return;
-
-    id.value    = row[0] || '';
-    barcode.value = row[1] || code;
-    nama.value  = row[2] || '';
-    beli.value  = row[3] || '';
-    jual.value  = row[4] || '';
-    stok.value  = row[5] || '';
-
-  });
-
-  closeScanner();
+  } catch (err) {
+    alert("Gagal membuka kamera: " + err);
+    closeScanner();
+  }
 }
 
     scanLoop();
@@ -405,12 +384,11 @@ async function startCamera(){
     closeScanner();
   }
 }
-
 function closeScanner(){
 
-  if(scanLoopId){
-    cancelAnimationFrame(scanLoopId);
-    scanLoopId = null;
+  if(codeReader){
+    codeReader.reset();
+    codeReader = null;
   }
 
   if(videoStream){
@@ -460,6 +438,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
