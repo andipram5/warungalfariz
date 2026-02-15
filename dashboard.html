@@ -151,6 +151,7 @@ th{
 }
 
 </style>
+<script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 
 <body>
@@ -204,9 +205,6 @@ th{
   </div>
 </div>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
@@ -218,87 +216,7 @@ if(localStorage.getItem('login') !== 'true'){
   location = 'login.html';
 }
 
-  let codeReader;
-
-function openScanner(){
-  const modal = document.createElement('div');
-  modal.style = `
-    position:fixed; inset:0; background:rgba(0,0,0,.75);
-    display:flex; align-items:center; justify-content:center;
-    z-index:9999;
-  `;
-
-  modal.innerHTML = `
-    <div style="background:#fff;padding:15px;border-radius:14px;width:320px">
-      <div id="scanner" style="width:100%;height:300px"></div>
-      <button class="btn" style="margin-top:10px" onclick="closeScanner()">Tutup</button>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  codeReader = new ZXing.BrowserMultiFormatReader();
-
-  codeReader.decodeFromVideoDevice(null, 'scanner', (result, err) => {
-    if (result) {
-      const code = result.text;
-      id.value = code;
-      scanBarcode(code);
-      closeScanner();
-    }
-  });
-}
-
-function closeScanner(){
-  if(codeReader) codeReader.reset();
-  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
-}
-
-/* ==================== SCANNER ==================== */
-
-/*function openScanner(){
-  const modal = document.createElement('div');
-  modal.style = `
-    position:fixed; inset:0; background:rgba(0,0,0,.7);
-    display:flex; align-items:center; justify-content:center; z-index:9999;
-  `;
-
-  modal.innerHTML = `
-    <div style="background:#fff;padding:15px;border-radius:12px;width:320px">
-      <div id="scanner" style="width:100%;height:300px"></div>
-      <button class="btn" style="margin-top:8px" onclick="closeScanner()">Tutup</button>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  Quagga.init({
-    inputStream : {
-      name : "Live",
-      type : "LiveStream",
-      target: document.querySelector('#scanner'),
-      constraints: { facingMode: "environment" }
-    },
-    decoder : {
-      readers : ["ean_reader","code_128_reader","upc_reader"]
-    }
-  }, function(err) {
-      if (err) return alert(err);
-      Quagga.start();
-  });
-
-  Quagga.onDetected(function(data){
-    const code = data.codeResult.code;
-    id.value = code;
-    scanBarcode(code);
-    closeScanner();
-  });
-}
-
-function closeScanner(){
-  Quagga.stop();
-  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
-}
+let codeReader;
 
 /* ==================== PRODUK ==================== */
 
@@ -435,41 +353,48 @@ function printStruk(){
 </script>
 
 <script>
+
 function openScanner(){
   const modal = document.createElement('div');
   modal.style = `
-    position:fixed; inset:0; background:rgba(0,0,0,.7);
-    display:flex; align-items:center; justify-content:center; z-index:9999;
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.75);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
   `;
 
   modal.innerHTML = `
-    <div style="background:#fff;padding:15px;border-radius:12px;width:300px">
-      <div id="reader"></div>
-      <button class="btn" style="margin-top:8px" onclick="closeScanner()">Tutup</button>
+    <div style="background:#fff;padding:15px;border-radius:14px;width:320px">
+      <div id="scanner" style="width:100%;height:300px"></div>
+      <button class="btn" style="margin-top:10px" onclick="closeScanner()">Tutup</button>
     </div>
   `;
 
   document.body.appendChild(modal);
 
-  window.qrScanner = new Html5Qrcode("reader");
+  codeReader = new ZXing.BrowserMultiFormatReader();
 
-  qrScanner.start(
+  codeReader.decodeFromVideoDevice(
     { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    (decoded) => {
-      id.value = decoded;
-      scanBarcode(decoded);
-      closeScanner();
+    'scanner',
+    (result, err) => {
+      if (result) {
+        const code = result.text;
+        id.value = code;
+        scanBarcode(code);
+        closeScanner();
+      }
     }
   );
 }
 
 function closeScanner(){
-  if(window.qrScanner){
-    qrScanner.stop();
-  }
+  if(codeReader) codeReader.reset();
   document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
 }
+
   
 loadProduk();
 
@@ -490,6 +415,7 @@ function loadProduk(){
 
 </body>
 </html>
+
 
 
 
