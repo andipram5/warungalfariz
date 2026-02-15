@@ -205,6 +205,7 @@ th{
 </div>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
 
 
 <script>
@@ -217,9 +218,45 @@ if(localStorage.getItem('login') !== 'true'){
   location = 'login.html';
 }
 
-/* ==================== SCANNER ==================== */
+  let codeReader;
 
 function openScanner(){
+  const modal = document.createElement('div');
+  modal.style = `
+    position:fixed; inset:0; background:rgba(0,0,0,.75);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999;
+  `;
+
+  modal.innerHTML = `
+    <div style="background:#fff;padding:15px;border-radius:14px;width:320px">
+      <div id="scanner" style="width:100%;height:300px"></div>
+      <button class="btn" style="margin-top:10px" onclick="closeScanner()">Tutup</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  codeReader = new ZXing.BrowserMultiFormatReader();
+
+  codeReader.decodeFromVideoDevice(null, 'scanner', (result, err) => {
+    if (result) {
+      const code = result.text;
+      id.value = code;
+      scanBarcode(code);
+      closeScanner();
+    }
+  });
+}
+
+function closeScanner(){
+  if(codeReader) codeReader.reset();
+  document.querySelectorAll('div[style*="z-index:9999"]').forEach(el=>el.remove());
+}
+
+/* ==================== SCANNER ==================== */
+
+/*function openScanner(){
   const modal = document.createElement('div');
   modal.style = `
     position:fixed; inset:0; background:rgba(0,0,0,.7);
@@ -453,6 +490,7 @@ function loadProduk(){
 
 </body>
 </html>
+
 
 
 
