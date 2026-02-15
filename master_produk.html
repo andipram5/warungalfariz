@@ -437,34 +437,20 @@ function closeScanner(){
 function cariProdukManual(code){
   if(code.length < 5) return;
 
-  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
+  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code.trim()))
     .then(r=>r.json())
     .then(d=>{
 
       console.log('RESP API:', d);
 
-      let row = null;
+      if(d.status !== 'ok') return;
 
-      // Jika langsung array
-      if(Array.isArray(d)){
-        row = d;
-      }
-      // Jika bentuk object
-      else if(d.row){
-        row = d.row;
-      }
-      else if(d.data){
-        row = d.data;
-      }
-
-      if(!row) return;
-
-      id.value    = row[0] || '';
-      barcode.value = row[1] || code;
-      nama.value  = row[2] || '';
-      beli.value  = row[3] || '';
-      jual.value  = row[4] || '';
-      stok.value  = row[5] || '';
+      id.value    = d.id   || '';
+      barcode.value = d.barcode || code;
+      nama.value  = d.nama|| '';
+      beli.value  = d.beli|| '';
+      jual.value  = d.jual|| '';
+      stok.value  = d.stok|| '';
     });
 }
 </script>
@@ -472,6 +458,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
