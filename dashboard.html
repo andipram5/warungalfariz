@@ -372,15 +372,35 @@ function openScanner(){
     justify-content:center; align-items:center;
     z-index:99999;
   `;
-
-  modal.innerHTML = `
+modal.innerHTML = `
+  <div style="
+      background:#fff;
+      padding:14px;
+      border-radius:14px;
+      width:95%;
+      max-width:360px;
+      text-align:center;
+      position:relative;
+  ">
     <video id="video" autoplay playsinline
-      style="width:90%;max-width:350px;border-radius:12px;"></video>
-    <button class="btn" style="margin-top:10px" onclick="closeScanner()">Tutup</button>
-  `;
+      style="
+        width:100%;
+        border-radius:12px;
+        margin-bottom:10px;
+        pointer-events:none;
+      "></video>
+
+    <button id="btnCloseScan"
+      class="btn"
+      style="margin-top:5px;position:relative;z-index:9999">
+      Tutup
+    </button>
+  </div>
+`;
 
   document.body.appendChild(modal);
-
+  document.getElementById('btnCloseScan').onclick = closeScanner;
+  
   navigator.mediaDevices.getUserMedia({
     video:{ facingMode:{ ideal:"environment" }}
   })
@@ -442,6 +462,7 @@ function tutupPopup(){
 
 </body>
 </html>
+
 
 
 
