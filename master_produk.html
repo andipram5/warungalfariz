@@ -49,6 +49,26 @@ header button{
   gap:15px;
 }
 
+/* MODE HP */
+@media (max-width: 900px){
+  .container{
+    grid-template-columns:1fr;
+  }
+}
+.box table{
+  width:100%;
+  overflow-x:auto;
+  display:block;
+}
+
+.box thead, .box tbody, .box tr{
+  width:100%;
+}
+
+.box td, .box th{
+  white-space:nowrap;
+}
+
 .box{
   background:rgba(255,255,255,.95);
   border-radius:20px;
@@ -107,7 +127,46 @@ th{
   margin-top:8px;
   font-weight:600;
 }
+/* CARD VIEW PRODUK MODE HP */
+.product-cards{
+  display:none;
+}
+
+@media (max-width:900px){
+  table{display:none;}
+  .product-cards{display:block;}
+}
+
+.card-item{
+  background:#fff;
+  border-radius:14px;
+  padding:12px 14px;
+  margin-bottom:10px;
+  box-shadow:0 6px 15px rgba(0,0,0,.15);
+}
+
+.card-item h4{
+  margin:0 0 5px;
+  color:#065f46;
+}
+
+.card-row{
+  font-size:13px;
+  margin:3px 0;
+}
+
+.badge{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:600;
+  background:#22c55e;
+  color:white;
+}
+
 </style>
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 
 <body>
@@ -123,7 +182,10 @@ th{
 <h3>Tambah Produk</h3>
 
 <input id="id" placeholder="ID Produk">
-<input id="barcode" placeholder="Barcode">
+<div style="display:flex;gap:8px">
+  <input id="barcode" placeholder="Barcode" style="flex:1">
+  <button onclick="openScanner()" style="width:120px">📷 Scan</button>
+</div>
 <input id="nama" placeholder="Nama Produk">
 <input id="beli" type="number" placeholder="Harga Beli">
 <input id="jual" type="number" placeholder="Harga Jual">
@@ -148,6 +210,7 @@ th{
 </thead>
 <tbody id="tbl"></tbody>
 </table>
+<div id="cardProduk" class="product-cards"></div>
 </div>
 
 </div>
@@ -156,22 +219,41 @@ th{
 const API='https://script.google.com/macros/s/AKfycbwzAnij0peoNwwZCisPX9JnlWAbPvGdEpdR-ELqZDRZlvxGvc0sE40d3JhOAGIcesAi/exec';
 
 function load(){
-fetch(API+'?action=listProduk')
-.then(r=>r.json())
-.then(d=>{
-  tbl.innerHTML='';
-  d.forEach(r=>{
-    const tr=tbl.insertRow();
-    tr.insertCell().innerText = r[0]; // ID
-    tr.insertCell().innerText = r[1]; // Barcode
-    tr.insertCell().innerText = r[2]; // Nama
-    tr.insertCell().innerText = 'Rp ' + Number(r[3]).toLocaleString(); // Harga Beli
-    tr.insertCell().innerText = 'Rp ' + Number(r[4]).toLocaleString(); // Harga Jual
-    tr.insertCell().innerText = r[5]; // Stok
-  });
-});
-}
+  fetch(API+'?action=listProduk')
+  .then(r=>r.json())
+  .then(d=>{
+    tbl.innerHTML='';
+    cardProduk.innerHTML='';
 
+    d.forEach(r=>{
+      // TABEL DESKTOP
+      const tr = tbl.insertRow();
+      tr.insertCell().innerText = r[0];
+      tr.insertCell().innerText = r[1];
+      tr.insertCell().innerText = r[2];
+      tr.insertCell().innerText = 'Rp ' + Number(r[3]).toLocaleString();
+      tr.insertCell().innerText = 'Rp ' + Number(r[4]).toLocaleString();
+      tr.insertCell().innerText = r[5];
+
+      // CARD MODE HP
+      const div = document.createElement('div');
+      div.className = 'card-item';
+      div.innerHTML = `
+        <h4>${r[2]}</h4>
+        <div class="card-row">Barcode: ${r[1]}</div>
+        <div class="card-row">
+          Beli: Rp ${Number(r[3]).toLocaleString()} |
+          Jual: Rp ${Number(r[4]).toLocaleString()}
+        </div>
+        <div class="card-row">
+          Stok: <span class="badge">${r[5]}</span>
+        </div>
+      `;
+      cardProduk.appendChild(div);
+    });
+  });
+}
+  
 function simpan(){
 
   if(!id.value || !nama.value || !jual.value){
@@ -214,9 +296,111 @@ function simpan(){
 
 load();
 </script>
+<script>
+let videoStream = null;
+let scanLoopId = null;
+
+function openScanner(){
+
+  const modal = document.createElement('div');
+  modal.id = "scanModal";
+  modal.style = `
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.85);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999999;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#fff;
+      padding:12px;
+      border-radius:14px;
+      width:90%;
+      max-width:360px;
+      text-align:center;
+      position:relative;
+    ">
+
+      <video id="video" autoplay playsinline
+        style="width:100%;border-radius:12px;pointer-events:none"></video>
+
+      <button id="btnCloseScan"
+        style="margin-top:10px;width:100%;padding:12px;border:none;
+        border-radius:12px;background:linear-gradient(135deg,#14b8a6,#22c55e);
+        color:white;font-weight:600">
+        Tutup
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  setTimeout(() => {
+    document.getElementById("btnCloseScan")
+      .addEventListener("click", closeScanner);
+  }, 50);
+
+  startCamera();
+}
+
+async function startCamera(){
+  try {
+    videoStream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:{ ideal:"environment" }}
+    });
+
+    const video = document.getElementById('video');
+    video.srcObject = videoStream;
+
+    const detector = new BarcodeDetector({
+      formats:["ean_13","ean_8","code_128","upc_a","upc_e"]
+    });
+
+    const scanLoop = async ()=>{
+      if(!video.videoWidth) return requestAnimationFrame(scanLoop);
+
+      const codes = await detector.detect(video);
+      if(codes.length){
+        const code = codes[0].rawValue;
+        barcode.value = code;
+        closeScanner();
+      } else {
+        scanLoopId = requestAnimationFrame(scanLoop);
+      }
+    };
+
+    scanLoop();
+
+  } catch(err){
+    alert("Gagal membuka kamera: " + err);
+    closeScanner();
+  }
+}
+
+function closeScanner(){
+
+  if(scanLoopId){
+    cancelAnimationFrame(scanLoopId);
+    scanLoopId = null;
+  }
+
+  if(videoStream){
+    videoStream.getTracks().forEach(t=>t.stop());
+    videoStream = null;
+  }
+
+  const modal = document.getElementById("scanModal");
+  if(modal) modal.remove();
+}
+</script>
 
 </body>
 </html>
+
 
 
 
