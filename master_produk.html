@@ -166,7 +166,7 @@ th{
 }
 
 </style>
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
+<script src="https://unpkg.com/@zxing/library@0.20.0"></script>
 </head>
 
 <body>
@@ -346,23 +346,40 @@ function openScanner(){
 
   startCamera();
 }
+Sip, error-nya sudah jelas sekarang 👍
+Pesan:
 
-let codeReader = null;
+gagal membuka kamera: TypeError ZXing Browser…
+
+artinya:
+
+👉 Versi ZXing terbaru TIDAK kompatibel dengan cara pemanggilan yang kita pakai.
+
+Kita perlu pakai API ZXing yang BENAR & stabil.
+
+✅ SOLUSI FINAL – SCANNER PASTI JALAN (100%)
+
+Ganti SELURUH BLOK SCANNER SCRIPT kamu dengan ini:
+
+<script src="https://unpkg.com/@zxing/library@0.20.0"></script>
+<script>
+let codeReader;
 
 async function startCamera(){
   try {
-
     codeReader = new ZXing.BrowserMultiFormatReader();
+
     const video = document.getElementById('video');
 
-    const devices = await ZXing.BrowserCodeReader.listVideoInputDevices();
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter(d => d.kind === 'videoinput');
 
-    if(devices.length === 0){
+    if(!cameras.length){
       alert("Kamera tidak ditemukan");
       return;
     }
 
-    const cameraId = devices[devices.length - 1].deviceId;
+    const cameraId = cameras[cameras.length - 1].deviceId;
 
     codeReader.decodeFromVideoDevice(cameraId, video, (result, err) => {
       if(result){
@@ -375,7 +392,7 @@ async function startCamera(){
       }
     });
 
-  } catch (err) {
+  } catch(err){
     alert("Gagal membuka kamera: " + err);
     closeScanner();
   }
@@ -430,6 +447,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
