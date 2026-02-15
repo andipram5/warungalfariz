@@ -374,28 +374,52 @@ function openScanner(){
   `;
 
   modal.innerHTML = `
+  <div style="
+    background:#fff;
+    padding:12px;
+    border-radius:14px;
+    width:90%;
+    max-width:360px;
+    text-align:center;
+    position:relative;
+  ">
+
     <div style="
-      background:#fff;
-      padding:12px;
-      border-radius:14px;
-      width:90%;
-      max-width:360px;
-      text-align:center;
+      position:relative;
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
     ">
       <video id="video" autoplay playsinline
-        style="width:100%;border-radius:12px"></video>
-      <button id="btnCloseScan"
-        class="btn"
-        style="margin-top:8px;width:100%">
-        Tutup
-      </button>
+        style="
+          width:100%;
+          display:block;
+          pointer-events:none;
+        "></video>
     </div>
-  `;
 
-  document.body.appendChild(modal);
-  document.getElementById('btnCloseScan').onclick = closeScanner;
+    <button id="btnCloseScan"
+      class="btn"
+      style="
+        margin-top:10px;
+        width:100%;
+        position:relative;
+        z-index:9999999;
+      ">
+      Tutup
+    </button>
 
-  startCamera();
+  </div>
+`;
+  
+document.body.appendChild(modal);
+
+setTimeout(() => {
+  document.getElementById("btnCloseScan")
+    .addEventListener("click", closeScanner);
+}, 50);
+
+startCamera();
 }
 
 
@@ -473,6 +497,7 @@ function tutupPopup(){
 
 </body>
 </html>
+
 
 
 
