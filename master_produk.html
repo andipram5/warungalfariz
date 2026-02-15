@@ -253,6 +253,22 @@ function load(){
     });
   });
 }
+
+/* ==================== BARCODE ==================== */
+
+function scanBarcode(code){
+  if(code.length < 5) return;
+
+  fetch(API + '?action=cariProduk&barcode=' + encodeURIComponent(code))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status === 'ok'){
+        nama.value  = d.nama;
+        harga.value = d.jual;
+        qty.focus();
+      }
+    });
+}
   
 function simpan(){
 
@@ -296,6 +312,7 @@ function simpan(){
 
 load();
 </script>
+
 <script>
 let videoStream = null;
 let scanLoopId = null;
@@ -314,83 +331,83 @@ function openScanner(){
   `;
 
   modal.innerHTML = `
+  <div style="
+    background:#fff;
+    padding:12px;
+    border-radius:14px;
+    width:90%;
+    max-width:360px;
+    text-align:center;
+    position:relative;
+  ">
+
     <div style="
-      background:#fff;
-      padding:12px;
-      border-radius:14px;
-      width:90%;
-      max-width:360px;
-      text-align:center;
       position:relative;
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
     ">
-
       <video id="video" autoplay playsinline
-        style="width:100%;border-radius:12px;pointer-events:none"></video>
-
-      <button id="btnCloseScan"
-        style="margin-top:10px;width:100%;padding:12px;border:none;
-        border-radius:12px;background:linear-gradient(135deg,#14b8a6,#22c55e);
-        color:white;font-weight:600">
-        Tutup
-      </button>
-
+        style="
+          width:100%;
+          display:block;
+          pointer-events:none;
+        "></video>
     </div>
-  `;
 
-  document.body.appendChild(modal);
+    <button id="btnCloseScan"
+      class="btn"
+      style="
+        margin-top:10px;
+        width:100%;
+        position:relative;
+        z-index:9999999;
+      ">
+      Tutup
+    </button>
 
-  setTimeout(() => {
-    document.getElementById("btnCloseScan")
-      .addEventListener("click", closeScanner);
-  }, 50);
+  </div>
+`;
+  
+document.body.appendChild(modal);
 
-  startCamera();
+setTimeout(() => {
+  document.getElementById("btnCloseScan")
+    .addEventListener("click", closeScanner);
+}, 50);
+
+startCamera();
 }
-Sip, error-nya sudah jelas sekarang 👍
-Pesan:
 
-gagal membuka kamera: TypeError ZXing Browser…
-
-artinya:
-
-👉 Versi ZXing terbaru TIDAK kompatibel dengan cara pemanggilan yang kita pakai.
-
-Kita perlu pakai API ZXing yang BENAR & stabil.
-
-✅ SOLUSI FINAL – SCANNER PASTI JALAN (100%)
-
-Ganti SELURUH BLOK SCANNER SCRIPT kamu dengan ini:
-
-<script src="https://unpkg.com/@zxing/library@0.20.0"></script>
-<script>
-let codeReader;
 
 async function startCamera(){
   try {
-    codeReader = new ZXing.BrowserMultiFormatReader();
+    videoStream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:{ ideal:"environment" }}
+    });
 
     const video = document.getElementById('video');
+    video.srcObject = videoStream;
 
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter(d => d.kind === 'videoinput');
-
-    if(!cameras.length){
-      alert("Kamera tidak ditemukan");
-      return;
-    }
-
-    const cameraId = cameras[cameras.length - 1].deviceId;
-
-    codeReader.decodeFromVideoDevice(cameraId, video, (result, err) => {
-      if(result){
-        const code = result.text;
-
-        barcode.value = code;
-        cariProdukManual(code);
-
-        closeScanner();
-      }
+    const detector = new BarcodeDetector({
+      formats:["ean_13","ean_8","code_128","upc_a","upc_e"]
     });
+
+    scanLoop = async ()=>{
+      if(!video.videoWidth) return requestAnimationFrame(scanLoop);
+
+      const codes = await detector.detect(video);
+      if(codes.length){
+        const code = codes[0].rawValue;
+        id.value = code;
+        scanBarcode(code);
+        closeScanner();   // 🔥 AUTO CLOSE
+      } else {
+        scanLoopId = requestAnimationFrame(scanLoop);
+      }
+    };
+
+    scanLoop();
 
   } catch(err){
     alert("Gagal membuka kamera: " + err);
@@ -398,10 +415,17 @@ async function startCamera(){
   }
 }
 
+
 function closeScanner(){
-  if(codeReader){
-    codeReader.reset();
-    codeReader = null;
+
+  if(scanLoopId){
+    cancelAnimationFrame(scanLoopId);
+    scanLoopId = null;
+  }
+
+  if(videoStream){
+    videoStream.getTracks().forEach(t=>t.stop());
+    videoStream = null;
   }
 
   const modal = document.getElementById("scanModal");
@@ -447,6 +471,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
