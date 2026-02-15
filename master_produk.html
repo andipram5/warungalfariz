@@ -374,27 +374,25 @@ async function startCamera(){
 
     console.log('RESP API:', d);
 
-    let p = null;
+    let row = null;
 
-    if(d.status === 'ok'){
-      if(d.id) p = d;
-      else if(d.data) p = d.data;
-      else if(d.row) p = {
-        id:   d.row[0],
-        nama: d.row[2],
-        beli: d.row[3],
-        jual: d.row[4],
-        stok: d.row[5]
-      };
+    if(Array.isArray(d)){
+      row = d;
+    } else if(d.row){
+      row = d.row;
+    } else if(d.data){
+      row = d.data;
     }
 
-    if(!p) return;
+    if(!row) return;
 
-    id.value    = p.id   || '';
-    nama.value  = p.nama|| '';
-    beli.value  = p.beli|| '';
-    jual.value  = p.jual|| '';
-    stok.value  = p.stok|| '';
+    id.value    = row[0] || '';
+    barcode.value = row[1] || code;
+    nama.value  = row[2] || '';
+    beli.value  = row[3] || '';
+    jual.value  = row[4] || '';
+    stok.value  = row[5] || '';
+
   });
 
   closeScanner();
@@ -431,37 +429,38 @@ function cariProdukManual(code){
     .then(r=>r.json())
     .then(d=>{
 
-      console.log('RESP API:', d); // DEBUG
+      console.log('RESP API:', d);
 
-      let p = null;
+      let row = null;
 
-      if(d.status === 'ok'){
-        if(d.id) p = d;
-        else if(d.data) p = d.data;
-        else if(d.row) p = {
-          id:   d.row[0],
-          nama: d.row[2],
-          beli: d.row[3],
-          jual: d.row[4],
-          stok: d.row[5]
-        };
+      // Jika langsung array
+      if(Array.isArray(d)){
+        row = d;
+      }
+      // Jika bentuk object
+      else if(d.row){
+        row = d.row;
+      }
+      else if(d.data){
+        row = d.data;
       }
 
-      if(!p) return;
+      if(!row) return;
 
-      id.value    = p.id   || '';
-      nama.value  = p.nama|| '';
-      beli.value  = p.beli|| '';
-      jual.value  = p.jual|| '';
-      stok.value  = p.stok|| '';
+      id.value    = row[0] || '';
+      barcode.value = row[1] || code;
+      nama.value  = row[2] || '';
+      beli.value  = row[3] || '';
+      jual.value  = row[4] || '';
+      stok.value  = row[5] || '';
     });
 }
-
 </script>
 
 
 </body>
 </html>
+
 
 
 
