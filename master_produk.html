@@ -401,7 +401,7 @@ async function startCamera(){
       const codes = await detector.detect(video);
       if(codes.length){
         const code = codes[0].rawValue;
-        id.value = code;
+        barcode.value = code;
         scanBarcode(code);
         closeScanner();   // 🔥 AUTO CLOSE
       } else {
@@ -459,6 +459,7 @@ function cariProdukManual(code){
 
 </body>
 </html>
+
 
 
 
